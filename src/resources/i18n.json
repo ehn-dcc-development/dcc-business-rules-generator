@@ -1,0 +1,20 @@
+{
+  "vaccine-not-recognised": {
+    "en": "Only vaccines registered with, and recognised by the EMA are allowed."
+  },
+  "vaccine-not-accepted": {
+    "en": "Only certain vaccines that are approved by the EMA or the WHO are accepted."
+  },
+  "course-not-completed": {
+    "en": "The vaccination course should be completed."
+  },
+  "vaccination-before-today": {
+    "en": "Date of vaccination must be before the current date."
+  },
+  "vaccination-not-valid": {
+    "en": "The delay time for this vaccine since this vaccination has not elapsed yet."
+  },
+  "vaccination-not-too-old": {
+    "en": "Vaccination should not be too long ago."
+  }
+}

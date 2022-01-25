@@ -1,0 +1,22 @@
+[
+  {
+    "v": "foo,2021-12-05,3/3",
+    "@": "2021-12-05T00:00:00+00:00",
+    "expectedFailures": [ "vaccine-not-recognised", "vaccine-not-accepted" ]
+  },
+  {
+    "v": "foo,2021-12-05,3/3",
+    "@": "2021-12-06T00:00:00+01:00",
+    "expectedFailures": [ "vaccine-not-recognised", "vaccine-not-accepted" ]
+  },
+  {
+    "v": "Janssen,2021-12-05,1/1",
+    "@": "2021-12-06T00:00:00+01:00",
+    "expectedFailures": [ "vaccination-not-valid" ]
+  },
+  {
+    "v": "Janssen,2021-12-05,2/2",
+    "@": "2021-12-06T00:00:00+01:00",
+    "expectedFailures": []
+  }
+]

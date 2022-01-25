@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://id.uvci.eu/dcc-rules-generator/testing.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "v": {
+        "type": "string",
+        "pattern": "^.+?,\\d{4}-\\d{1,2}-\\d{1,2},\\d/\\d$"
+      },
+      "@": {
+        "type": "string",
+        "format": "date-time",
+        "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([-+][0-2]\\d:[0-5]\\d|Z)$"
+      },
+      "expectedFailures": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "vaccine-not-recognised",
+            "vaccine-not-accepted",
+            "course-not-completed",
+            "vaccination-before-today",
+            "vaccination-not-valid",
+            "vaccination-not-too-old"
+          ]
+        }
+      }
+    },
+    "required": [
+      "v",
+      "@",
+      "expectedFailures"
+    ]
+  }
+}
