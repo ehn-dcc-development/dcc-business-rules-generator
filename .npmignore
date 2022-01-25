@@ -1,4 +1,7 @@
 /*.sh
 /dist/test/
+/dist/dev/
 /src/
 /tsconfig.json
+/TODO.md
+/.idea/

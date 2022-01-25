@@ -1,7 +1,7 @@
 import {join} from "path"
 const {isFalse, isTrue} = require("chai").assert
 
-import {readJson} from "./file-utils"
+import {readJson} from "../dev/json-utils"
 import {isValidSpecification} from "../specification"
 
 

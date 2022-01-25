@@ -2,7 +2,7 @@ import {existsSync} from "fs"
 import {join} from "path"
 const {fail, isTrue} = require("chai").assert
 
-import {readJson, writeJson} from "./file-utils"
+import {readJson, writeJson} from "../dev/json-utils"
 import {generateRulesFrom} from "../generator"
 import {validateSpecificationAgainstSchema} from "../specification"
 import {asJson, TestCaseDefinition, TestCases, runRulesAgainstTestCaseDefinitions, validateTestCasesAgainstSchema} from "../testing"
