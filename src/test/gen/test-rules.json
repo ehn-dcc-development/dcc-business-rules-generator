@@ -169,7 +169,7 @@
       ]
     }
   },
-  "vaccination-not-valid": {
+  "delay-time-not-yet-elapsed": {
     "Identifier": "VR-NL-0004",
     "Type": "Acceptance",
     "Country": "NL",

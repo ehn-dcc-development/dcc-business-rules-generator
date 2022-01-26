@@ -12,7 +12,7 @@
   {
     "v": "Janssen,2021-12-05,1/1",
     "@": "2021-12-06T00:00:00+01:00",
-    "expectedFailures": [ "vaccination-not-valid" ]
+    "expectedFailures": [ "delay-time-not-yet-elapsed" ]
   },
   {
     "v": "Janssen,2021-12-05,2/2",

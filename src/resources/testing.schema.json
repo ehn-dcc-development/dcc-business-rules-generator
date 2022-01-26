@@ -23,7 +23,7 @@
             "vaccine-not-accepted",
             "course-not-completed",
             "vaccination-before-today",
-            "vaccination-not-valid",
+            "delay-time-not-yet-elapsed",
             "vaccination-not-too-old"
           ]
         }

@@ -146,7 +146,7 @@ export const generateRulesFrom = ({ country, validFrom, vaccineSpecs, maxValid }
             )
         },
         {
-            genSource: "vaccination-not-valid",
+            genSource: "delay-time-not-yet-elapsed",
             logic: whenVaccination_(
                 when_(
                     vaccineSpecs.map(caseForVaccineSpecification)
