@@ -1,6 +1,6 @@
 {
   "name": "dcc-business-rules-generator",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Generate DCC validation/business rules from a specification",
   "keywords": [
     "certlogic",
@@ -18,7 +18,7 @@
     "build": "tsc",
     "postbuild": "./copy-resources.sh",
     "watch-build": "tsc --watch --incremental",
-    "pretest": "npm run build && rm -f gen/*.json",
+    "pretest": "npm run build && rm -f src/test/gen/*.json",
     "test": "mocha  --recursive dist/test",
     "watch-test": "mocha --watch  --recursive dist/test",
     "clean": "rm -rf dist/ && rm -rf node_modules/"

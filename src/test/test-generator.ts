@@ -10,7 +10,8 @@ import {asJson, TestCaseDefinition, TestCases, runRulesAgainstTestCaseDefinition
 
 describe("generate from file", () => {
 
-    const genPath = join(__dirname, "gen")
+    const testPath = join("src", "test")
+    const genPath = join(testPath, "gen")
 
     const testOnce = (specName: string) => {
         const spec = readJson(join(__dirname, "specs", `${specName}-spec.json`))
@@ -21,7 +22,7 @@ describe("generate from file", () => {
         const rules = generateRulesFrom(spec)
         writeJson(join(genPath, `${specName}-rules.json`), rules)
 
-        const testsPath = join(__dirname, "test-defs", `${specName}-tests.json`)
+        const testsPath = join(testPath, "test-defs", `${specName}-tests.json`)
         if (existsSync(testsPath)) {
             const testCaseDefinitions: TestCaseDefinition[] = readJson(testsPath)
             const testCaseDefinitionsErrors = validateTestCasesAgainstSchema(testCaseDefinitions)
