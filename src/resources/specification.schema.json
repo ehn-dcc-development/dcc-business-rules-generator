@@ -97,7 +97,7 @@
           "minItems": 1
         },
         "validity": {
-          "$ref": "#/$defs/ValiditySpecification"
+          "$ref": "#/$defs/Validity"
         }
       },
       "required": [
@@ -119,7 +119,7 @@
         "other"
       ]
     },
-    "ValiditySpecification": {
+    "Validity": {
       "oneOf": [
         {
           "type": "null"

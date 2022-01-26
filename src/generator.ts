@@ -5,13 +5,7 @@ import {and_, plusTime_, var_} from "certlogic-js/dist/factories"
 import {asDateTime_, Case, dn_, dt_, eq_, now_, sd_, when_, whenVaccination_} from "./factories"
 import {translations} from "./i18n"
 import {Rule} from "./rules"
-import {
-    Combo,
-    isRange,
-    Specification,
-    VaccinesSpecification,
-    ValiditySpecification
-} from "./specification"
+import {Combo, fromOfValidity, Specification, VaccinesSpecification, Validity} from "./specification"
 
 
 const leftPad0 = (str: string, n: number): string =>
@@ -58,11 +52,20 @@ const makeRules = (countryId: string, validFrom: string, ruleGenSpecs: RuleGenSp
     )
 
 
-const caseExprForCombo = (combo: Combo) => {
+const caseExprForCombo = (combo: Combo): CertLogicExpression => {
     if (combo === "other") {
+        return { ">": [ dn_, sd_, 3 ] }
+    }
+    if (combo === "n/1, n > 3") {
+        return and_(
+            eq_(sd_, 1),
+            { ">": [ dn_, 3 ] }
+        )
+    }
+    if (combo === "n/n, n > 3") {
         return and_(
             eq_(dn_, sd_),
-            { ">": [ sd_, 3 ] }
+            { ">": [ dn_, 3 ] }
         )
     }
     const combiMatch = combo.match(/^(\d+)\/(\d+)$/)!!
@@ -73,25 +76,19 @@ const caseExprForCombo = (combo: Combo) => {
     )
 }
 
-const caseForCombo = (combo: Combo, validitySpec: ValiditySpecification): Case =>
+const fromCaseForCombo = (combo: Combo, validity: Validity): Case =>
     [
         caseExprForCombo(combo),
         (() => {
-            if (validitySpec === null) {
-                return false
-            }
-            if (typeof validitySpec === "number") {
-                return {
+            const from = fromOfValidity(validity)
+            return from === undefined
+                ? false
+                : {
                     "not-before": [
                         asDateTime_(now_),
-                        plusTime_(dt_, validitySpec, "day")
+                        plusTime_(dt_, from, "day")
                     ]
                 }
-            }
-            if (isRange(validitySpec)) {
-                // TODO  implement this
-            }
-            throw new Error(`validity specification not handled: ${JSON.stringify(validitySpec, null, 2)}`)
         })()
     ]
 
@@ -104,15 +101,24 @@ const guardForVaccines = (vaccineIds: string[]): CertLogicOperation =>
             vaccineIds
         ]}
 
-const caseForVaccineSpecification = (vaccineSpec: VaccinesSpecification): Case =>
+
+const requiresFromCase = (validity: Validity) => {
+    const from = fromOfValidity(validity)
+    return from === undefined || from > 0
+}
+
+const fromExprForVaccineSpecification = (vaccineSpec: VaccinesSpecification): CertLogicExpression =>
+    when_(
+        vaccineSpec.comboSpecs
+            .filter(({ validity }) => requiresFromCase(validity))
+            .flatMap(({ combos, validity }) => combos.map((combo) => fromCaseForCombo(combo, validity))),
+        true
+    )
+
+const fromCaseForVaccineSpecification = (vaccineSpec: VaccinesSpecification): Case =>
     [
         guardForVaccines(vaccineSpec.vaccineIds),
-        when_(
-            vaccineSpec.comboSpecs
-                .filter(({ validity }) => validity === null || (typeof validity === "number" && validity > 0) || (typeof validity === "object"))
-                .flatMap(({ combos, validity }) => combos.map((combo) => caseForCombo(combo, validity))),
-            true
-        )
+        fromExprForVaccineSpecification(vaccineSpec)
     ]
 
 
@@ -145,19 +151,21 @@ export const generateRulesFrom = ({ country, validFrom, vaccineSpecs, maxValid }
                     ] }
             )
         },
-        {
-            genSource: "delay-time-not-yet-elapsed",
-            logic: whenVaccination_(
-                when_(
-                    vaccineSpecs.map(caseForVaccineSpecification)
+        ...(vaccineSpecs.some((vaccineSpec) => vaccineSpec.comboSpecs.some(({ validity }) => requiresFromCase(validity)))
+            ? [{
+                genSource: "delay-time-not-yet-elapsed",
+                logic: whenVaccination_(
+                    when_(
+                        vaccineSpecs.map(fromCaseForVaccineSpecification)
+                    )
                 )
-            )
-        },
-        ...(maxValid === undefined
-            ? []
-            : [{
+            }]
+            : []),
+        ...(maxValid !== undefined
+            ? [{
                 genSource: "vaccination-not-too-old",
                 logic: whenVaccination_({ "not-after": [ asDateTime_(now_), plusTime_(dt_, 365, "day") ] })
-            }])
+            }]
+            : [])
     ])
 

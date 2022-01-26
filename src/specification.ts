@@ -18,7 +18,7 @@ export type VaccinesSpecification = {
 
 export type ComboSpecification = {
     combos: Combo[]
-    validity: ValiditySpecification
+    validity: Validity
 }
 
 /**
@@ -30,15 +30,22 @@ export type Combo = "1/1" | "2/2" | "2/1" | "3/3" | "3/2" | "3/1" | "n/n, n > 3"
  * `null` means: not accepted
  * A number `<n>` means: (only) valid from the `<n>`'th day after vaccination (based on calendar dates)
  */
-export type ValiditySpecification = null | number | Range
+export type Validity = null | number | Range
 
 export type Range = [
     from: number,
     to?: number
 ]
 
-export const isRange = (range: unknown): range is Range =>
-    Array.isArray(range) && 1 <= range.length && range.length <= 2
+export const fromOfValidity = (validity: Validity): number | undefined => {
+    if (validity === null) {
+        return undefined
+    }
+    if (Array.isArray(validity)) {
+        return validity[0]
+    }
+    return validity
+}
 
 
 export const validateSpecificationAgainstSchema = createSchemaValidator(require("./resources/specification.schema.json"))
