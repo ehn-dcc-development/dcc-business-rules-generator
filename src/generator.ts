@@ -5,7 +5,7 @@ import {and_, plusTime_, var_} from "certlogic-js/dist/factories"
 import {asDateTime_, Case, dn_, dt_, eq_, now_, sd_, when_, whenVaccination_} from "./factories"
 import {translations} from "./i18n"
 import {Rule} from "./rules"
-import {Combo, fromOfValidity, Specification, VaccinesSpecification, Validity} from "./specification"
+import {Combo, fromOfValidity, Specification, toOfValidity, VaccinesSpecification, Validity} from "./specification"
 
 
 const leftPad0 = (str: string, n: number): string =>
@@ -92,6 +92,22 @@ const fromCaseForCombo = (combo: Combo, validity: Validity): Case =>
         })()
     ]
 
+const toCaseForCombo = (combo: Combo, validity: Validity): Case =>
+    [
+        caseExprForCombo(combo),
+        (() => {
+            const to_ = toOfValidity(validity)
+            return to_ === undefined
+                ? false
+                : {
+                    "before": [
+                        asDateTime_(now_),
+                        plusTime_(dt_, to_, "day")
+                    ]
+                }
+        })()
+    ]
+
 
 const guardForVaccines = (vaccineIds: string[]): CertLogicOperation =>
     vaccineIds.length === 1
@@ -119,6 +135,24 @@ const fromCaseForVaccineSpecification = (vaccineSpec: VaccinesSpecification): Ca
     [
         guardForVaccines(vaccineSpec.vaccineIds),
         fromExprForVaccineSpecification(vaccineSpec)
+    ]
+
+
+const requiresToCase = (validity: Validity) =>
+    toOfValidity(validity) !== undefined
+
+const toExprForVaccineSpecification = (vaccineSpec: VaccinesSpecification): CertLogicExpression =>
+    when_(
+        vaccineSpec.comboSpecs
+            .filter(({ validity }) => requiresToCase(validity))
+            .flatMap(({ combos, validity }) => combos.map((combo) => toCaseForCombo(combo, validity))),
+        true
+    )
+
+const toCaseForVaccineSpecification = (vaccineSpec: VaccinesSpecification): Case =>
+    [
+        guardForVaccines(vaccineSpec.vaccineIds),
+        toExprForVaccineSpecification(vaccineSpec)
     ]
 
 
@@ -157,6 +191,16 @@ export const generateRulesFrom = ({ country, validFrom, vaccineSpecs, maxValid }
                 logic: whenVaccination_(
                     when_(
                         vaccineSpecs.map(fromCaseForVaccineSpecification)
+                    )
+                )
+            }]
+            : []),
+        ...(vaccineSpecs.some((vaccineSpec) => vaccineSpec.comboSpecs.some(({ validity }) => requiresToCase(validity)))
+            ? [{
+                genSource: "vaccination-no-longer-valid",
+                logic: whenVaccination_(
+                    when_(
+                        vaccineSpecs.map(toCaseForVaccineSpecification)
                     )
                 )
             }]

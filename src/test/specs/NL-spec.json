@@ -7,7 +7,7 @@
       "comboSpecs": [
         {
           "combos": [ "1/1" ],
-          "validity": 28
+          "validity": [28, 270]
         },
         {
           "combos": [ "2/2", "3/3", "3/2", "n/n, n > 3" ],
@@ -24,7 +24,7 @@
         },
         {
           "combos": [ "2/2" ],
-          "validity": 14
+          "validity": [14, 270]
         },
         {
           "combos": [ "3/3", "3/2", "n/n, n > 3" ],

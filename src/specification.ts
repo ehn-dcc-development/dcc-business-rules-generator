@@ -47,6 +47,11 @@ export const fromOfValidity = (validity: Validity): number | undefined => {
     return validity
 }
 
+export const toOfValidity = (validity: Validity): number | undefined =>
+    (validity === null || typeof validity === "number")
+        ? undefined
+        : validity[1]
+
 
 export const validateSpecificationAgainstSchema = createSchemaValidator(require("./resources/specification.schema.json"))
 

@@ -16,5 +16,8 @@
   },
   "vaccination-not-too-old": {
     "en": "Vaccination should not be too long ago."
+  },
+  "vaccination-no-longer-valid": {
+    "en": "Vaccination is too long ago, and is no longer valid."
   }
 }
