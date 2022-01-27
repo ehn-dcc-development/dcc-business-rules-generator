@@ -1,6 +1,6 @@
 {
   "name": "dcc-business-rules-generator",
-  "version": "0.1.0",
+  "version": "0.1.0-dev-1",
   "description": "Generate DCC validation/business rules from a specification",
   "keywords": [
     "certlogic",
